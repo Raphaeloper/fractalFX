@@ -20,7 +20,7 @@ public class Draw extends Canvas {
     double magSize = WIDTH / totalX;                                  //magnification (in percent)
     double yLimU = HEIGHT / (2 * magSize);                            //yLimU > yLimL
     double yLimL = -yLimU;
-    int[][] screen = new int[WIDTH + 1][HEIGHT + 1];                         //pixel grid
+    int[][] screen = new int[WIDTH][HEIGHT];                         //pixel grid
     double diff = ((totalX) / WIDTH) / 2;
     int ORIGIN_X = (int) (WIDTH - xLimU * magSize),
             ORIGIN_Y = (int) (HEIGHT - yLimU * magSize);
@@ -29,9 +29,9 @@ public class Draw extends Canvas {
     public Draw() {
     }
 
-    public void updateRange(double xLimU, double xLimL) {
-        this.xLimU = xLimU;
-        this.xLimL = xLimL;
+    public void updateRange(double xU, double xL) {
+        this.xLimU = xU;
+        this.xLimL = xL;
         totalX = xLimU - xLimL;
         magSize = WIDTH / totalX;
         yLimU = HEIGHT / (2 * magSize);

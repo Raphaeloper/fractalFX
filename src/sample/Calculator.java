@@ -13,7 +13,7 @@ public class Calculator extends Task<int[][]> {
     protected int[][] call() throws Exception {
         Complex z = new Complex(0, 0);
         Complex c = new Complex(0, 0);
-        int[][] screen = new int[Draw.WIDTH + 1][Draw.HEIGHT + 1];
+        int[][] screen = new int[Draw.WIDTH][Draw.HEIGHT];
         int iterations, graphX, graphY;
         for (double x = d.xLimL; x <= d.xLimU; x += d.diff) {
             for (double y = d.yLimL; y <= d.yLimU; y += d.diff) {
