@@ -9,24 +9,28 @@ import java.awt.*;
 
 
 public class Draw extends Canvas {
-    final static Toolkit tk = Toolkit.getDefaultToolkit();
+    static final Toolkit tk = Toolkit.getDefaultToolkit();
     static final int WIDTH = (int) tk.getScreenSize().getWidth();
     static final int HEIGHT = (int) tk.getScreenSize().getHeight();
-    static int maxIterations = 150;                                          //increasing this will give you a more detailed fractal
-    private final int MAX_COLORS = 16777216;
+    static final int MAX_COLORS = 16777216;
+    
+    int maxIterations = 500;                                          //increasing this will give you a more detailed fractal
     double xLimU = 4;                                                 //xLimU > xLimL      default:  4
     double xLimL = -4;                                                //                   default: -4
     double totalX = xLimU - xLimL;
     double magSize = WIDTH / totalX;                                  //magnification (in percent)
     double yLimU = HEIGHT / (2 * magSize);                            //yLimU > yLimL
     double yLimL = -yLimU;
-    int[][] screen = new int[WIDTH][HEIGHT];                         //pixel grid
     double diff = ((totalX) / WIDTH) / 2;
-    int ORIGIN_X = (int) (WIDTH - xLimU * magSize),
-            ORIGIN_Y = (int) (HEIGHT - yLimU * magSize);
-    private int colorStep = MAX_COLORS / maxIterations;
+    int[][] screen = new int[WIDTH + 1][HEIGHT + 1];                  //pixel grid
+    int originX = (int) (WIDTH - xLimU * magSize),                    //offset
+            originY = (int) (HEIGHT - yLimU * magSize);
+    int colorStep = MAX_COLORS / maxIterations;
+
+    WritableImage wImage;
 
     public Draw() {
+        wImage = new WritableImage(WIDTH, HEIGHT);
     }
 
     public void updateRange(double xU, double xL) {
@@ -37,19 +41,16 @@ public class Draw extends Canvas {
         yLimU = HEIGHT / (2 * magSize);
         yLimL = -yLimU;
         diff = ((totalX) / WIDTH) / 2;
-        ORIGIN_X = (int) (WIDTH - xLimU * magSize);
-        ORIGIN_Y = (int) (HEIGHT - yLimU * magSize);
+        originX = (int) (WIDTH - xLimU * magSize);
+        originY = (int) (HEIGHT - yLimU * magSize);
     }
 
-    public WritableImage paint() {
-        WritableImage wImage = new WritableImage(WIDTH, HEIGHT);
+    public WritableImage paint(int y) {
         PixelWriter writer = wImage.getPixelWriter();
         double[] rgba = new double[4];
         for (int x = 0; x < WIDTH; x++) {
-            for (int y = 0; y < HEIGHT; y++) {
-                intToRGB(/*MAX_COLORS - */screen[x][y] * colorStep, rgba);
-                writer.setColor(x, y, new Color(rgba[0], rgba[1], rgba[2], rgba[3]));
-            }
+            intToRGB(/*MAX_COLORS - */screen[x][y] * colorStep, rgba);
+            writer.setColor(x, y, new Color(rgba[0], rgba[1], rgba[2], rgba[3]));
         }
         return wImage;
     }

@@ -30,40 +30,39 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         pStage = primaryStage;
         pStage.getIcons().add(new Image("file:icon.png"));
-        setTask();
         setUI();
+        setTask();
     }
 
+    //Creates and launches calculation threads
+    //Updates the screen afterwards
     public void setTask() {
-        Calculator task = new Calculator(draw);
-        task.setOnSucceeded((succeededEvent) -> {
-            draw.screen = task.getValue();
-            imageView.setImage(draw.paint());
-        });
-        task.setOnFailed((workerStateEvent -> {
-            System.out.println(task);
-        }));
-
-        ExecutorService executorService = Executors.newFixedThreadPool(1);
-        executorService.execute(task);
+        Calculator task;
+        ExecutorService executorService = Executors.newFixedThreadPool(15);
+        //Calculating row by row
+        for (double y = draw.yLimL; y <= draw.yLimU; y += draw.diff) {
+            //Creating a different thread for each row
+            task = new Calculator(draw, y);
+            //Workaround for updating the image (needed to be final)
+            double finalY = y;
+            //When the row has finished loading
+            task.setOnSucceeded((succeededEvent) -> {
+                updateImage(finalY);
+            });
+            //Launching each thread
+            executorService.execute(task);
+        }
         executorService.shutdown();
     }
 
-    public Alert setDialog() {
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Loading...");
-        alert.setGraphic(null);
-        alert.setHeaderText(null);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        alert.setOnCloseRequest(dialogEvent ->
-                alert.close());
-        alert.setResizable(false);
-        alert.getButtonTypes().clear();
-        alert.getDialogPane().setPrefSize(480, 170);
-        return alert;
+    //Outputs the row to an image
+    public void updateImage(double y) {
+        int graphY;
+        graphY = draw.originY + (int) (y * draw.magSize);
+        imageView.setImage(draw.paint(graphY));
     }
 
+    //Sets up the general overlay
     public void setUI() throws Exception {
         BorderPane root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         root.setCenter(imageView);
@@ -77,10 +76,12 @@ public class Main extends Application {
         pStage.show();
     }
 
+    //Sets up the menus
     public MenuBar setMenus() {
         Menu file = new Menu("File");
         MenuItem zoom = new MenuItem("Zoom");
         file.getItems().add(zoom);
+        //Handles the zoom in/out dialog
         zoom.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
