@@ -11,11 +11,24 @@ public class Complex {
         rad = Math.atan(b / a);
     }
 
+    public Complex(Complex c) {
+        this.a = c.a;
+        this.b = c.b;
+        this.r = c.r;
+        this.rad = c.rad;
+    }
+
     public void update(double a, double b) {
         this.a = a;
         this.b = b;
         r = abs();
         rad = Math.atan(b / a);
+    }
+
+    public void update(double rad) {
+        this.rad = rad;
+        a = r * Math.cos(rad);
+        b = r * Math.sin(rad);
     }
 
     public double abs() {

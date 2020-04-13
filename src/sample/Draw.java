@@ -14,7 +14,7 @@ public class Draw extends Canvas {
     static final int HEIGHT = (int) tk.getScreenSize().getHeight();
     static final int MAX_COLORS = 16777216;
     
-    int maxIterations = 500;                                          //increasing this will give you a more detailed fractal
+    int maxIterations = 1000;                                         //increasing this will give you a more detailed fractal
     double xLimU = 4;                                                 //xLimU > xLimL      default:  4
     double xLimL = -4;                                                //                   default: -4
     double totalX = xLimU - xLimL;
